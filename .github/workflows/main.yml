@@ -1,0 +1,58 @@
+name: Backstage Triggered Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      repoName:
+        description: "Repository Name"
+        required: true
+        type: string
+      branchName:
+        description: "Branch Name"
+        required: true
+        type: string
+      nodeType:
+        description: "Node Type"
+        required: true
+        type: string
+      uploadedFile:
+        description: "Path to the uploaded file"
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: 
+
+      - name: Print Variables
+        run: |
+          echo "Repo Name: "
+          echo "Branch Name: "
+          echo "Node Type: "
+
+      - name: Decode uploaded file
+        run: |
+          echo "" | cut -d ',' -f2 | base64 --decode > uploaded_file.json
+          cat uploaded_file.json
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: 
+          password: 
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --build-arg REPO_NAME= \
+            --build-arg BRANCH_NAME= \
+            --build-arg NODE_TYPE= \
+            -t /: .
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push /:
